@@ -24,29 +24,29 @@ log() {
 
 # === KIỂM TRA NGUỒN ===
 if [ ! -d "$SRC_DIR" ]; then
-  log "❌ LỖI: Thư mục nguồn không tồn tại: $SRC_DIR"
+  log "LỖI: Thư mục nguồn không tồn tại: $SRC_DIR"
   exit 1
 fi
 
 # === KIỂM TRA DUNG LƯỢNG Ổ ĐĨA ===
 free_gb=$(df -BG "$DEST_DIR" | awk 'NR==2 {print $4}' | sed 's/G//')
 if (( free_gb < MIN_FREE_GB )); then
-  log "❌ LỖI: Không đủ dung lượng (còn ${free_gb}GB, cần ≥ ${MIN_FREE_GB}GB)"
+  log "LỖI: Không đủ dung lượng (còn ${free_gb}GB, cần ≥ ${MIN_FREE_GB}GB)"
   exit 1
 fi
 
 # === BẮT ĐẦU BACKUP ===
-log "🚀 Bắt đầu backup: $SRC_DIR → $OUTFILE"
+log " Bắt đầu backup: $SRC_DIR → $OUTFILE"
 tar -czf "$OUTFILE" -C "$(dirname "$SRC_DIR")" "$(basename "$SRC_DIR")"
-log "✅ Hoàn tất: $OUTFILE"
+log " Hoàn tất: $OUTFILE"
 
 # === XOÁ FILE BACKUP CŨ ===
 count=$(ls -1t ${DEST_DIR}/${BASENAME}-*.tar.gz 2>/dev/null | wc -l)
 if [ "$count" -gt "$KEEP" ]; then
   files_to_delete=$(ls -1t ${DEST_DIR}/${BASENAME}-*.tar.gz | tail -n +"$((KEEP+1))")
   for f in $files_to_delete; do
-    rm -f "$f" && log "🗑️ Xoá: $f"
+    rm -f "$f" && log "Xoá: $f"
   done
 fi
 
-log "🏁 KẾT THÚC backup"
+log "KẾT THÚC backup"
